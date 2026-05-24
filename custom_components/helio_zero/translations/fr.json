@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HelioZero",
+        "description": "Connexion à l'API REST d'un routeur (MQTT reste le chemin par défaut). Ajoutez l'intégration à nouveau pour chaque routeur supplémentaire.",
+        "data": {
+          "host": "URL de base du routeur",
+          "api_token": "Jeton API (optionnel)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible d'atteindre /api/v1/public sur le routeur"
+    },
+    "abort": {
+      "already_configured": "Cette URL de routeur est déjà configurée"
+    }
+  }
+}

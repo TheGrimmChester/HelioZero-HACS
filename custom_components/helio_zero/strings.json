@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HelioZero",
+        "description": "Connect to one router REST API (MQTT remains the default). Add the integration again for each additional router URL.",
+        "data": {
+          "host": "Router base URL",
+          "api_token": "API token (optional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach /api/v1/public on the router"
+    },
+    "abort": {
+      "already_configured": "This router URL is already configured"
+    }
+  }
+}

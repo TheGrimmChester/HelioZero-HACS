@@ -1,0 +1,12 @@
+{
+  "domain": "helio_zero",
+  "name": "HelioZero",
+  "codeowners": ["@TheGrimmChester"],
+  "config_flow": true,
+  "documentation": "https://heliozero.clouded.fr/en/integrations/home-assistant/hacs/",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/TheGrimmChester/HelioZero-HACS/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

@@ -7,9 +7,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-import aiohttp
 
-from .const import CONF_API_TOKEN, DOMAIN
+from .const import DOMAIN
 from .coordinator import HelioZeroCoordinator
 from .device_info import build_device_info, entity_unique_id
 
@@ -37,17 +36,7 @@ class HelioZeroVacationSwitch(CoordinatorEntity, SwitchEntity):
         return bool(cfg.get("vacation_enabled"))
 
     async def _patch(self, enabled: bool) -> None:
-        host = self._entry.data["host"].rstrip("/")
-        token = self._entry.data.get(CONF_API_TOKEN) or None
-        headers = {"Authorization": f"Bearer {token}"} if token else {}
-        async with aiohttp.ClientSession() as session:
-            async with session.patch(
-                f"{host}/api/v1/config",
-                json={"vacation_enabled": enabled},
-                headers=headers,
-                timeout=10,
-            ) as resp:
-                resp.raise_for_status()
+        await self.coordinator.async_patch_config({"vacation_enabled": enabled})
         await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self, **kwargs) -> None:

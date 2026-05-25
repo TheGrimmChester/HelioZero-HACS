@@ -4,9 +4,8 @@ from homeassistant.components.button import ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
-import aiohttp
 
-from .const import CONF_API_TOKEN, DOMAIN
+from .const import DOMAIN
 from .device_info import build_device_info, entity_unique_id
 
 
@@ -30,13 +29,5 @@ class RepublishDiscoveryButton(ButtonEntity):
         return build_device_info(self._entry, coordinator)
 
     async def async_press(self) -> None:
-        host = self._entry.data["host"].rstrip("/")
-        headers = {}
-        token = self._entry.data.get(CONF_API_TOKEN)
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                f"{host}/api/v1/mqtt/discover", headers=headers, timeout=10
-            ) as resp:
-                resp.raise_for_status()
+        coordinator = self._hass.data[DOMAIN][self._entry.entry_id]
+        await coordinator.async_post_mqtt_discover()

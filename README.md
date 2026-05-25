@@ -67,6 +67,22 @@ Diagnostics (host, router name, firmware): **Settings → Devices → Diagnostic
 
 **Hybrid (HACS + MQTT on one router):** use the [MQTT Lovelace dashboard](https://heliozero.clouded.fr/assets/integrations/home-assistant/lovelace/dashboard.yaml) for monitoring and status; avoid changing the same setting from both integrations.
 
+## Development
+
+REST poll and entity writes share one Home Assistant `aiohttp` clientsession on the data coordinator (`coordinator.py`). Add new REST platforms via `async_patch_config` / `async_post_mqtt_discover` rather than new `ClientSession()` instances.
+
+**CI (every PR):** `python3 -m compileall custom_components/helio_zero` and [hassfest](https://github.com/home-assistant/hassfest).
+
+**Hardware REST contract (when touching coordinator or REST entities):**
+
+```bash
+export HELIO_ZERO_FIELD_URL=http://192.168.2.159
+export HELIO_ZERO_API_BEARER_TOKEN=<router PAT>
+./scripts/run_hardware_checks.sh
+```
+
+PATCH tests restore `vacation_enabled` and `max_routed_w` on the device after each run.
+
 ## Related
 
 - Firmware & MQTT: [HelioZero](https://github.com/TheGrimmChester/HelioZero-ESP32)

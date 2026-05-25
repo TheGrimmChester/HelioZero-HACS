@@ -6,7 +6,7 @@ Licensed under the EUPL — see LICENSE in the repository root.
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
-from .const import DOMAIN
+from .const import CONF_API_TOKEN, DOMAIN
 from .coordinator import HelioZeroCoordinator
 
 PLATFORMS = ["sensor", "switch", "number", "button"]

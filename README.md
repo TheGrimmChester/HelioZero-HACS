@@ -21,9 +21,7 @@ Source repository: **[HelioZero-HACS](https://github.com/TheGrimmChester/HelioZe
 
 ## Brand icons
 
-Integration icons/logos live in [`custom_components/helio_zero/`](custom_components/helio_zero/) (`icon.png`, `logo.png`, `@2x` and `dark_*` variants) per [Home Assistant brands](https://github.com/home-assistant/brands) spec. Sources: [`assets/brand/`](assets/brand/) (synced from [HelioZero-ESP32](https://github.com/TheGrimmChester/HelioZero-ESP32)); regenerate with `npm run prepare:brand`.
-
-For the global brands CDN, submit [`brands/custom_integrations/helio_zero/`](brands/custom_integrations/helio_zero/) to [home-assistant/brands](https://github.com/home-assistant/brands) (see [`brands/README.md`](brands/README.md)).
+Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_components/helio_zero/brand/) (`icon.png`, `logo.png`, `@2x` and `dark_*` variants) for [Home Assistant 2026.3+ inline brand images](https://developers.home-assistant.io/blog/2026/02/24/brands-proxy-api/). Sources: [`assets/brand/`](assets/brand/) (synced from [HelioZero-ESP32](https://github.com/TheGrimmChester/HelioZero-ESP32)); regenerate with `npm run prepare:brand` (set `HELIO_ZERO_ESP32_ROOT` when the ESP32 repo is not a sibling directory).
 
 ## Install
 

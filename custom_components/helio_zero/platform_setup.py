@@ -11,7 +11,7 @@ from .integration_mode import effective_mode
 
 
 def get_coordinator(hass: HomeAssistant, entry: ConfigEntry) -> HelioZeroCoordinator:
-    coordinator = entry.runtime_data
+    coordinator = getattr(entry, "runtime_data", None)
     if coordinator is None:
         coordinator = hass.data[DOMAIN][entry.entry_id]
     return coordinator

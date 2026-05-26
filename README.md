@@ -16,7 +16,7 @@
   </a>
 </p>
 
-**Requires Home Assistant 2026.4.0 or newer** (inline integration brand images need 2026.3+).
+**Requires Home Assistant 2026.3.0 or newer** (inline integration brand images in `brand/`). Lovelace starter dashboards on the docs site target **2026.4+** (sections view).
 
 Optional [Home Assistant](https://www.home-assistant.io/) custom integration for [HelioZero](https://github.com/TheGrimmChester/HelioZero-ESP32) PV excess routers. Polls the router REST API (`/api/v1/measurements`) when you prefer UI setup over hand-edited MQTT YAML.
 
@@ -31,7 +31,7 @@ Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_c
 ## Install
 
 1. In HACS: **Settings → Custom repositories** → add `https://github.com/TheGrimmChester/HelioZero-HACS` (category **Integration**). No repository subpath.
-2. Install **HelioZero** from HACS and restart Home Assistant.
+2. Install **HelioZero** from HACS (**Releases** tab → `v0.1.x` when offered) and restart Home Assistant.
 3. **Settings → Devices & services → Add integration → HelioZero**.
 4. Enter `http://<router-ip>` and optional API token (router **More → API** permanent access tokens when HTTP API protection is enabled).
 
@@ -47,6 +47,13 @@ Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_c
 | **Reconfigure** (⋮ menu on the integration) | Router base URL (IP/hostname) and API token — leave token empty to keep the current token |
 
 **MQTT pack:** blueprints, cookbooks, and discovery YAML remain on the [HelioZero website](https://heliozero.clouded.fr/en/integrations/home-assistant/) — see the [Home Assistant integration pack](https://heliozero.clouded.fr/en/integrations/home-assistant/).
+
+### HelioZero missing from “Add integration”?
+
+1. **Settings → System → Logs** — search for `helio_zero`. An `ImportError` or version message means the custom component did not load (fix the error, or upgrade Home Assistant to **2026.3+**).
+2. Confirm the folder exists: `config/custom_components/helio_zero/manifest.json`.
+3. In HACS, open **HelioZero →** use **Redownload** and pick the latest **Release** (not a hidden/empty default branch). Restart Home Assistant.
+4. If you previously installed from `main` before `v0.1.0`, remove `config/custom_components/helio_zero`, redownload the release zip, restart, then add the integration again.
 
 **Initial release 0.1.0:** per-router `unique_id` (`{config_entry_id}_{key}`), HA brand icons, `issue_tracker` in manifest, and device **Open router UI** link (`configuration_url`).
 
@@ -101,7 +108,7 @@ PATCH tests restore `vacation_enabled` and `max_routed_w` on the device after ea
    ```
 
 4. GitHub Actions **Release** validates, builds `helio-zero-hacs.zip`, and publishes a GitHub Release. Mark the stable tag **Latest** on GitHub.
-5. In HACS, install from **Releases** when `zip_release` is enabled (`hacs.json`); the default branch is hidden after the first release.
+5. In HACS, install from **Releases** when `zip_release` is enabled (`hacs.json`).
 
 Dry-run without tagging: **Actions → Release → Run workflow** (artifact only, no GitHub Release).
 

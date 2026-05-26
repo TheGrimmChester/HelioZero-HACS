@@ -19,7 +19,7 @@ def _redact(entry: ConfigEntry) -> dict:
 
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ConfigEntry) -> dict:
-    coordinator = entry.runtime_data or hass.data[DOMAIN][entry.entry_id]
+    coordinator = getattr(entry, "runtime_data", None) or hass.data[DOMAIN][entry.entry_id]
     device = coordinator.data.get("device") or {}
     if not isinstance(device, dict):
         device = {}

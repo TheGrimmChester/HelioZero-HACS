@@ -9,7 +9,7 @@ CHANGELOG="${REPO_ROOT}/CHANGELOG.md"
 cat <<'EOF'
 ## Upgrade notes
 
-- **Home Assistant:** Requires **2026.4.0** or newer (`hacs.json`).
+- **Home Assistant:** Requires **2026.3.0** or newer (`hacs.json`, `manifest.json`).
 - **Firmware:** Full REST parity needs HelioZero firmware with `GET /api/v1/telemetry/snapshot` and `POST /api/v1/triac/override` (see [MQTT/REST parity](https://heliozero.clouded.fr/en/integrations/home-assistant/mqtt-rest-parity/)).
 - **Integration mode:** Default **companion** auto-detects MQTT discovery and registers only **Republish MQTT discovery**; use **rest_only** in the integration options for the full REST entity surface (avoid duplicate entities when MQTT is active).
 - **Reload:** After upgrade, restart Home Assistant or reload the HelioZero integration.

@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN
-from .coordinator import HelioZeroCoordinator
+
+if TYPE_CHECKING:
+    from .coordinator import HelioZeroCoordinator
 
 
 def entity_unique_id(entry: ConfigEntry, key: str) -> str:
@@ -20,7 +24,7 @@ def _device_payload(coordinator: HelioZeroCoordinator) -> dict:
 
 
 def build_device_info(
-    entry: ConfigEntry, coordinator: HelioZeroCoordinator
+    entry: ConfigEntry, coordinator: "HelioZeroCoordinator"
 ) -> DeviceInfo:
     """Device registry entry using live router metadata from the coordinator."""
     device = _device_payload(coordinator)

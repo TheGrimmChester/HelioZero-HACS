@@ -3,7 +3,15 @@
     "step": {
       "user": {
         "title": "HelioZero",
-        "description": "Connexion à l'API REST d'un routeur (MQTT reste le chemin par défaut). Ajoutez l'intégration à nouveau pour chaque routeur supplémentaire.",
+        "description": "Connexion à l'API REST d'un routeur (MQTT reste le chemin par défaut). Ajoutez l'intégration à nouveau pour chaque routeur. Ensuite : **Configurer** pour le mode et l'intervalle d'actualisation ; **Reconfigurer** (menu ⋮) pour l'URL ou le jeton API.",
+        "data": {
+          "host": "URL de base du routeur",
+          "api_token": "Jeton API (optionnel)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer HelioZero",
+        "description": "Modifier l'URL de base ou le jeton API. Laissez le jeton vide pour conserver le jeton actuel.",
         "data": {
           "host": "URL de base du routeur",
           "api_token": "Jeton API (optionnel)"
@@ -11,10 +19,23 @@
       }
     },
     "error": {
-      "cannot_connect": "Impossible d'atteindre /api/v1/public sur le routeur"
+      "cannot_connect": "Impossible d'atteindre /api/v1/public sur le routeur (vérifiez l'URL et le réseau)",
+      "invalid_auth": "Jeton API refusé (HTTP 401 sur /api/v1/public)"
     },
     "abort": {
       "already_configured": "Cette URL de routeur est déjà configurée"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options HelioZero",
+        "description": "Intervalle court = capteurs plus réactifs ; intervalle long = moins de charge sur le LAN du routeur.",
+        "data": {
+          "integration_mode": "Mode d'intégration",
+          "scan_interval": "Intervalle d'actualisation REST (secondes)"
+        }
+      }
     }
   }
 }

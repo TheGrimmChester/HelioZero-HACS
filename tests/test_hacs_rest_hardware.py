@@ -15,6 +15,17 @@ POLL_PATHS = (
     "/api/v1/config",
 )
 
+COORDINATOR_POLL_PATHS = (
+    "/api/v1/measurements",
+    "/api/v1/device",
+    "/api/v1/state",
+    "/api/v1/health",
+    "/api/v1/config",
+    "/api/v1/telemetry/snapshot",
+    "/api/v1/sources/diagnostics",
+    "/api/v1/actions/config",
+)
+
 
 def _normalize_config(body: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(body, dict):
@@ -123,3 +134,50 @@ async def test_post_mqtt_discover(
 ) -> None:
     async with rest_session.post(f"{base_url}/api/v1/mqtt/discover") as resp:
         assert 200 <= resp.status < 300, await resp.text()
+
+
+@pytest.mark.hardware
+@pytest.mark.asyncio
+async def test_poll_bundle_v2(rest_session: aiohttp.ClientSession, base_url: str) -> None:
+    """Coordinator parity paths (gather bundle)."""
+    import asyncio
+
+    async def _get(path: str) -> tuple[str, dict[str, Any]]:
+        async with rest_session.get(f"{base_url}{path}") as resp:
+            if path in ("/api/v1/measurements", "/api/v1/device"):
+                resp.raise_for_status()
+            if resp.status != 200:
+                return path, {}
+            payload = await resp.json()
+            return path, payload if isinstance(payload, dict) else {}
+
+    results = dict(await asyncio.gather(*[_get(p) for p in COORDINATOR_POLL_PATHS]))
+
+    measurements = results.get("/api/v1/measurements", {})
+    device = results.get("/api/v1/device", {})
+    snapshot = results.get("/api/v1/telemetry/snapshot", {})
+    state = results.get("/api/v1/state", {})
+
+    assert (measurements.get("house") or {}).get("grid_net_w") is not None
+    assert device.get("device_uid")
+    for key in ("house_net_power_w", "triac_open_percent", "device_uid"):
+        assert key in snapshot, snapshot
+    diag = measurements.get("diagnostics") or {}
+    assert "source_health" in diag, diag
+    assert "source_stale" in diag, diag
+    status = state.get("status") or {}
+    assert "source_health" in status, status
+
+
+@pytest.mark.hardware
+@pytest.mark.asyncio
+async def test_triac_override_auto(
+    rest_session: aiohttp.ClientSession, base_url: str
+) -> None:
+    async with rest_session.post(
+        f"{base_url}/api/v1/triac/override",
+        json={"command": "AUTO"},
+    ) as resp:
+        assert resp.status == 200, await resp.text()
+        body = await resp.json()
+        assert body.get("ok") is True

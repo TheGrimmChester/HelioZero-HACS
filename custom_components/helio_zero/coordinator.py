@@ -27,13 +27,24 @@ class HelioZeroCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         interval = scan_interval_seconds(entry.options)
-        super().__init__(
-            hass,
-            _LOGGER,
-            name=DOMAIN,
-            update_interval=timedelta(seconds=interval),
-            config_entry=entry,
-        )
+        coordinator_kwargs: dict[str, Any] = {
+            "update_interval": timedelta(seconds=interval),
+        }
+        try:
+            super().__init__(
+                hass,
+                _LOGGER,
+                name=DOMAIN,
+                config_entry=entry,
+                **coordinator_kwargs,
+            )
+        except TypeError:
+            super().__init__(
+                hass,
+                _LOGGER,
+                name=DOMAIN,
+                **coordinator_kwargs,
+            )
         self._entry = entry
         self._session = async_get_clientsession(hass)
         self._configured_mode = configured_mode(entry)

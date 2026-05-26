@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+
+- Fix HACS minimum Home Assistant version: **2026.3.0** (brand icons), not 2026.4.0 — avoids HACS marking the integration incompatible on 2026.3.x.
+- Re-enable default branch in HACS (`hide_default_branch: false`) so a broken release install can recover from `main`.
+- Lazy-import coordinator from `device_info` so config flow registration does not pull the full platform stack at load time.
+- Safer `DataUpdateCoordinator` / `runtime_data` usage on older Home Assistant builds.
+
 ## 0.1.0
 
 First public release (custom repository + GitHub Release zip).

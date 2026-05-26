@@ -19,7 +19,7 @@ PLATFORMS = [
 
 
 async def _async_entry_updated(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    coordinator: HelioZeroCoordinator | None = entry.runtime_data
+    coordinator: HelioZeroCoordinator | None = getattr(entry, "runtime_data", None)
     if coordinator is None:
         coordinator = hass.data.get(DOMAIN, {}).get(entry.entry_id)
     if coordinator is None:
@@ -33,7 +33,8 @@ async def _async_entry_updated(hass: HomeAssistant, entry: ConfigEntry) -> None:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = HelioZeroCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
-    entry.runtime_data = coordinator
+    if hasattr(entry, "runtime_data"):
+        entry.runtime_data = coordinator
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
     entry.async_on_unload(entry.add_update_listener(_async_entry_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

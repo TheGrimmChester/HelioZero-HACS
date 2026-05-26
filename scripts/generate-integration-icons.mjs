@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /**
- * PNG brand assets for Home Assistant / HACS (see home-assistant/brands image spec).
+ * PNG brand assets for Home Assistant / HACS (HA 2026.3+ inline brand/ folder).
  * Outputs:
- *   custom_components/helio_zero/icon.png, icon@2x.png, logo.png, logo@2x.png
- *   custom_components/helio_zero/dark_icon.png, dark_icon@2x.png, dark_logo.png, dark_logo@2x.png
- *   brands/custom_integrations/helio_zero/* (same set, for upstream brands PR)
+ *   custom_components/helio_zero/brand/icon.png, icon@2x.png, logo.png, logo@2x.png
+ *   custom_components/helio_zero/brand/dark_icon.png, dark_icon@2x.png, dark_logo.png, dark_logo@2x.png
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -13,14 +12,12 @@ import sharp from "sharp";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const brandDir = join(root, "assets", "brand");
-const faviconSvg = join(brandDir, "helio-zero-favicon.svg");
+const iconLightSvg = join(brandDir, "helio-zero-icon-light.svg");
+const iconDarkSvg = join(brandDir, "helio-zero-icon-dark.svg");
 const logoLightSvg = join(brandDir, "helio-zero-logo-light.svg");
 const logoDarkSvg = join(brandDir, "helio-zero-logo-dark.svg");
 
-const OUT_DIRS = [
-  join(root, "custom_components", "helio_zero"),
-  join(root, "brands", "custom_integrations", "helio_zero"),
-];
+const OUT_DIR = join(root, "custom_components", "helio_zero", "brand");
 
 function writePng(path, buffer) {
   writeFileSync(path, buffer);
@@ -51,15 +48,16 @@ async function landscapeLogo(svg, minSide, maxSide) {
 
 async function emitSet(outDir) {
   mkdirSync(outDir, { recursive: true });
-  const favicon = readFileSync(faviconSvg);
+  const iconLight = readFileSync(iconLightSvg);
+  const iconDark = readFileSync(iconDarkSvg);
   const logoLight = readFileSync(logoLightSvg);
   const logoDark = readFileSync(logoDarkSvg);
 
   const files = [
-    ["icon.png", await squareIcon(favicon, 256)],
-    ["icon@2x.png", await squareIcon(favicon, 512)],
-    ["dark_icon.png", await squareIcon(favicon, 256)],
-    ["dark_icon@2x.png", await squareIcon(favicon, 512)],
+    ["icon.png", await squareIcon(iconLight, 256)],
+    ["icon@2x.png", await squareIcon(iconLight, 512)],
+    ["dark_icon.png", await squareIcon(iconDark, 256)],
+    ["dark_icon@2x.png", await squareIcon(iconDark, 512)],
     ["logo.png", await landscapeLogo(logoLight, 128, 256)],
     ["logo@2x.png", await landscapeLogo(logoLight, 256, 512)],
     ["dark_logo.png", await landscapeLogo(logoDark, 128, 256)],
@@ -71,7 +69,5 @@ async function emitSet(outDir) {
   }
 }
 
-for (const dir of OUT_DIRS) {
-  await emitSet(dir);
-  console.log(`generate-integration-icons: wrote ${dir}`);
-}
+await emitSet(OUT_DIR);
+console.log(`generate-integration-icons: wrote ${OUT_DIR}`);

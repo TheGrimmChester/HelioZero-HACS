@@ -23,7 +23,10 @@ pytest -m hardware -q
 
 ## Release checklist (maintainers)
 
-0. On GitHub (repo **Settings**): set a **description** and **topics** (`homeassistant`, `hacs`, `integration`) so `hacs/action` passes without `ignore` (required before HACS default store submission).
+0. On GitHub (**TheGrimmChester** account → repo **Settings → General**):
+   - **Description:** `Home Assistant custom integration for HelioZero ESP32 PV excess routers (REST companion to MQTT discovery).`
+   - **Topics:** `homeassistant`, `hacs`, `integration`
+   Then remove `ignore: description topics` from [`.github/workflows/hacs.yaml`](.github/workflows/hacs.yaml) and [`release.yaml`](.github/workflows/release.yaml) (required before HACS default store submission).
 1. Update `custom_components/helio_zero/manifest.json` `version` and `CHANGELOG.md` (`## X.Y.Z`).
 2. `./scripts/test-unit.sh`, `./scripts/build-release.sh`, and `RELEASE_TAG_NAME=vX.Y.Z python3 scripts/verify_release_version.py` locally.
 3. Merge with green **CI** + **hacs** workflows.

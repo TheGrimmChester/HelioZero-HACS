@@ -22,6 +22,11 @@ jobs:
           test ! -f custom_components/helio_zero/icon.png
           cmp custom_components/helio_zero/brand/icon.png custom_components/helio_zero/brand/dark_icon.png && exit 1 || true
       - uses: home-assistant/actions/hassfest@master
+      - name: HACS validation
+        uses: hacs/action@main
+        with:
+          category: integration
+          ignore: description topics
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
       - name: Python syntax check

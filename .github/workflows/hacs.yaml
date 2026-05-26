@@ -17,3 +17,5 @@ jobs:
         uses: hacs/action@main
         with:
           category: integration
+          # Remove ignore after repo Settings → Description + topics (homeassistant, hacs, integration).
+          ignore: description topics

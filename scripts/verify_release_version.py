@@ -11,6 +11,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = REPO_ROOT / "custom_components" / "helio_zero" / "manifest.json"
+# Stable vX.Y.Z and CI nightly vX.Y.Z-nightly.<sha> (manifest patched at build time).
 TAG_RE = re.compile(r"^v(?P<ver>\d+\.\d+\.\d+(?:[-+].*)?)$")
 
 

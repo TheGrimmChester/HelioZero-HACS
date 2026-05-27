@@ -98,6 +98,12 @@ PATCH tests restore `vacation_enabled` and `max_routed_w` on the device after ea
 
 ## Releasing
 
+### Nightly pre-releases (CI, `main`)
+
+When a push to `main` changes integration-related paths and **CI** is green, Actions publishes a GitHub **pre-release** tagged `vX.Y.Z-nightly.<short-sha>` (base `version` from `manifest.json` + commit). Install from [GitHub Releases](https://github.com/TheGrimmChester/HelioZero-HACS/releases) via HACS (**Releases** tab). These builds are **not** marked **Latest**.
+
+### Stable releases (manual tag)
+
 1. Bump `custom_components/helio_zero/manifest.json` `version` and add a `## X.Y.Z` section to `CHANGELOG.md`.
 2. Open a PR; wait for **CI** and **hacs** workflows green (`hassfest@master`, `hacs/action@main`, `./scripts/test-unit.sh`).
 3. Merge to `main`, then tag and push (tag must match manifest, e.g. `0.1.0` → `v0.1.0`):

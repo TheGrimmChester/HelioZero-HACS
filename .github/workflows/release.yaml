@@ -75,7 +75,7 @@ jobs:
         run: python3 scripts/verify_release_version.py
       - name: Build integration zip
         run: |
-          chmod +x scripts/build-release.sh
+          chmod +x scripts/build-release.sh scripts/verify-release-zip.sh
           ./scripts/build-release.sh
       - name: Upload release zip
         uses: actions/upload-artifact@v4

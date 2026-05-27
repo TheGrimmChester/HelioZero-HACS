@@ -38,8 +38,12 @@ def test_normalize_host_empty() -> None:
     [
         ({}, DEFAULT_SCAN_INTERVAL),
         ({CONF_SCAN_INTERVAL: 60}, 60),
-        ({CONF_SCAN_INTERVAL: 10}, MIN_SCAN_INTERVAL),
-        ({CONF_SCAN_INTERVAL: 200}, MAX_SCAN_INTERVAL),
+        ({CONF_SCAN_INTERVAL: 10}, 10),
+        ({CONF_SCAN_INTERVAL: 1}, 1),
+        ({CONF_SCAN_INTERVAL: 0}, MIN_SCAN_INTERVAL),
+        ({CONF_SCAN_INTERVAL: 300}, 300),
+        ({CONF_SCAN_INTERVAL: 400}, MAX_SCAN_INTERVAL),
+        ({CONF_SCAN_INTERVAL: 200}, 200),
         ({CONF_SCAN_INTERVAL: "bad"}, DEFAULT_SCAN_INTERVAL),
     ],
 )

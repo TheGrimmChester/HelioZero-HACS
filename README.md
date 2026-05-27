@@ -43,7 +43,7 @@ Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_c
 
 | Home Assistant action | What it changes |
 |---------------------|-----------------|
-| **Configure** (integration card) | Integration mode (`companion` / `rest_only`, reloads entities when changed) and **REST refresh interval** (15–120 seconds, applied immediately) |
+| **Configure** (integration card) | Integration mode (`companion` / `rest_only`, reloads entities when changed) and **REST refresh interval** (1 s – 5 min, applied immediately) |
 | **Reconfigure** (⋮ menu on the integration) | Router base URL (IP/hostname) and API token — leave token empty to keep the current token |
 
 **MQTT pack:** blueprints, cookbooks, and discovery YAML remain on the [HelioZero website](https://heliozero.clouded.fr/en/integrations/home-assistant/) — see the [Home Assistant integration pack](https://heliozero.clouded.fr/en/integrations/home-assistant/).
@@ -66,7 +66,7 @@ Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_c
 | **`companion`** (default when MQTT discovery exists) | `button.republish_discovery` only |
 | **`rest_only`** | Full MQTT discovery parity via REST (sensors, binary sensors, vacation, triac, actions, …) |
 
-Configure mode and REST refresh interval (15–120 s) under **Settings → Devices & services → HelioZero → Configure** (changes apply without restart).
+Configure mode and REST refresh interval (1 s – 5 min) under **Settings → Devices & services → HelioZero → Configure** (changes apply without restart).
 
 Diagnostics: **Settings → Devices → Diagnostics** (redacted token, effective mode, snapshot keys).
 

@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Brand assets (committed PNGs)
+        run: |
+          test -f custom_components/helio_zero/brand/icon.png
+          test -f custom_components/helio_zero/brand/icon@2x.png
+          test -f custom_components/helio_zero/brand/dark_icon.png
+          test -f custom_components/helio_zero/brand/logo.png
+          test ! -f custom_components/helio_zero/icon.png
+          cmp custom_components/helio_zero/brand/icon.png custom_components/helio_zero/brand/dark_icon.png && exit 1 || true
+      - uses: home-assistant/actions/hassfest@master
+      - name: Python syntax check
+        run: python3 -m compileall custom_components/helio_zero

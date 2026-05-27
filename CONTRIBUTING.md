@@ -4,7 +4,7 @@ Thank you for helping improve the HelioZero Home Assistant integration.
 
 ## Development setup
 
-1. Clone this repository and use branch `task010-hacs-mqtt-parity` (or `main` after merge).
+1. Clone this repository and use a feature branch (or `main` after merge).
 2. Install dev dependencies: `pip install -r requirements-dev.txt`
 3. Run unit tests: `./scripts/test-unit.sh`
 4. Run hardware contract tests only when you have a lab router (never commit tokens):
@@ -22,6 +22,10 @@ pytest -m hardware -q
 - Do not include router passwords, API tokens, or LAN IPs in issues or PR descriptions.
 
 ## Release checklist (maintainers)
+
+**Nightly (automatic):** merges to `main` that touch integration paths publish `vX.Y.Z-nightly.<sha>` pre-releases when CI is green. No maintainer action required.
+
+**Stable (manual):**
 
 0. On GitHub (**TheGrimmChester** account → repo **Settings → General**):
    - **Description:** `Home Assistant custom integration for HelioZero ESP32 PV excess routers (REST companion to MQTT discovery).`

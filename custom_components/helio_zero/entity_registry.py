@@ -69,6 +69,34 @@ def _status(data: dict[str, Any]) -> dict[str, Any]:
     return s if isinstance(s, dict) else {}
 
 
+# Entity key -> (measurements section, field) for CH2 REST parity with nested /measurements JSON.
+_SECOND_CHANNEL_MEASUREMENT_KEYS: dict[str, tuple[str, str]] = {
+    "second_active_import_w": ("second", "active_import_w"),
+    "second_active_export_w": ("second", "active_export_w"),
+    "second_voltage_v": ("raw_meter", "voltage_second_v"),
+    "second_current_a": ("raw_meter", "current_second_a"),
+    "second_power_factor": ("raw_meter", "pf_second"),
+    "second_energy_import_wh": ("second", "energy_total_import_wh"),
+    "second_energy_export_wh": ("second", "energy_total_export_wh"),
+    "second_day_energy_import_wh": ("second", "energy_day_import_wh"),
+    "second_day_energy_export_wh": ("second", "energy_day_export_wh"),
+    "mains_frequency_hz": ("raw_meter", "freq_hz"),
+}
+
+
+def _read_second_channel_from_measurements(
+    measurements: dict[str, Any], key: str
+) -> Any:
+    mapping = _SECOND_CHANNEL_MEASUREMENT_KEYS.get(key)
+    if not mapping:
+        return None
+    section, field = mapping
+    block = measurements.get(section) or {}
+    if not isinstance(block, dict):
+        return None
+    return block.get(field)
+
+
 def read_snapshot_key(data: dict[str, Any], key: str) -> Any:
     snap = _snapshot(data)
     if key in snap:
@@ -98,12 +126,22 @@ def read_snapshot_key(data: dict[str, Any], key: str) -> Any:
     second = m.get("second") or {}
     if key in second:
         return second[key]
-    return None
+    return _read_second_channel_from_measurements(m, key)
+
+
+def _triac_channel_present(data: dict[str, Any]) -> bool:
+    raw = _measurements(data).get("raw_meter") or {}
+    if not isinstance(raw, dict):
+        raw = {}
+    return (
+        _snapshot(data).get("second_voltage_v") is not None
+        or (_measurements(data).get("second") or {}).get("active_import_w") is not None
+        or raw.get("voltage_second_v") is not None
+    )
 
 
 CAPABILITY_CHECKS: dict[str, Callable[[dict[str, Any]], bool]] = {
-    "triac_channel": lambda d: _snapshot(d).get("second_voltage_v") is not None
-    or (_measurements(d).get("second") or {}).get("active_import_w") is not None,
+    "triac_channel": _triac_channel_present,
     "temperature": lambda d: (_state(d).get("temperature_c") or _snapshot(d).get("temperature_c")) is not None,
     "linky": lambda d: _measurements(d).get("linky_tariff") is not None
     or _snapshot(d).get("linky_ltarf") is not None,

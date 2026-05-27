@@ -1,44 +1,46 @@
-"""Site max routed power via REST."""
+"""Numbers (max routed, triac target) via REST."""
 
 from __future__ import annotations
 
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
-from .coordinator import HelioZeroCoordinator
-from .device_info import build_device_info, entity_unique_id
+from .entity import HelioZeroEntity
+from .entity_registry import entities_for_mode, read_snapshot_key
+from .platform_setup import get_coordinator, get_effective_mode
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities) -> None:
-    coordinator: HelioZeroCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([HelioZeroMaxRoutedNumber(coordinator, entry)])
+    coordinator = get_coordinator(hass, entry)
+    mode = get_effective_mode(hass, entry, coordinator)
+    specs = entities_for_mode(coordinator.data, mode, platform="number")
+    async_add_entities([HelioZeroNumber(coordinator, entry, spec) for spec in specs])
 
 
-class HelioZeroMaxRoutedNumber(CoordinatorEntity, NumberEntity):
-    _attr_name = "Max routed power (W)"
-    _attr_native_min_value = 0
-    _attr_native_max_value = 20000
-    _attr_native_step = 100
+class HelioZeroNumber(HelioZeroEntity, NumberEntity):
     _attr_mode = NumberMode.BOX
 
-    def __init__(self, coordinator: HelioZeroCoordinator, entry: ConfigEntry) -> None:
-        super().__init__(coordinator)
-        self._entry = entry
-        self._attr_unique_id = entity_unique_id(entry, "max_routed_w")
+    def __init__(self, coordinator, entry, spec):
+        super().__init__(coordinator, entry, spec)
+        self._attr_native_unit_of_measurement = spec.native_unit
+        self._attr_native_min_value = spec.min_value
+        self._attr_native_max_value = spec.max_value
+        self._attr_native_step = spec.step or 1
 
     @property
-    def device_info(self) -> DeviceInfo:
-        return build_device_info(self._entry, self.coordinator)
-
-    @property
-    def native_value(self) -> float:
-        cfg = self.coordinator.data.get("config") or {}
-        return float(cfg.get("max_routed_w") or 0)
+    def native_value(self) -> float | None:
+        if self.spec.key == "max_routed_w":
+            cfg = self.coordinator.data.get("config") or {}
+            return float(cfg.get("max_routed_w") or 0)
+        val = read_snapshot_key(self.coordinator.data, self.spec.key)
+        if val is None and self.spec.key == "triac_target":
+            val = read_snapshot_key(self.coordinator.data, "triac_open_percent")
+        return float(val) if val is not None else None
 
     async def async_set_native_value(self, value: float) -> None:
-        await self.coordinator.async_patch_config({"max_routed_w": int(value)})
+        if self.spec.key == "max_routed_w":
+            await self.coordinator.async_patch_config({"max_routed_w": int(value)})
+        elif self.spec.key == "triac_target":
+            await self.coordinator.async_post_triac_override(str(int(value)))
         await self.coordinator.async_request_refresh()

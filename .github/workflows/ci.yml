@@ -33,3 +33,9 @@ jobs:
         run: python3 -m compileall custom_components/helio_zero
       - name: Unit tests
         run: ./scripts/test-unit.sh
+      - name: Release zip layout
+        run: |
+          chmod +x scripts/build-release.sh
+          ./scripts/build-release.sh
+          unzip -l helio-zero-hacs.zip | grep -q ' manifest.json$'
+          unzip -l helio-zero-hacs.zip | grep -q 'helio_zero/manifest.json' && exit 1 || true

@@ -5,32 +5,38 @@ cd "$(dirname "$0")/.."
 OUT="${OUT:-helio-zero-hacs.zip}"
 rm -f "$OUT"
 (
-  cd custom_components
-  zip -r "../$OUT" helio_zero -x '*__pycache__/*' -x '*.pyc' -x '*~'
+  cd custom_components/helio_zero
+  zip -r "../../$OUT" . -x '*__pycache__/*' -x '*.pyc' -x '*~'
 )
 echo "Wrote $OUT"
 
-# Smoke-test archive layout (HACS expects helio_zero/ at zip root).
+# Smoke-test archive layout (HACS extractall target is custom_components/helio_zero/).
 if command -v unzip >/dev/null 2>&1; then
   zip_list="$(unzip -l "$OUT")"
   case "$zip_list" in
-    *helio_zero/manifest.json*) ;;
+    *" manifest.json"*) ;;
     *)
-      echo "ERROR: zip missing helio_zero/manifest.json" >&2
+      echo "ERROR: zip missing manifest.json at archive root" >&2
       exit 1
       ;;
   esac
   case "$zip_list" in
-    *helio_zero/__init__.py*) ;;
+    *" __init__.py"*) ;;
     *)
-      echo "ERROR: zip missing helio_zero/__init__.py" >&2
+      echo "ERROR: zip missing __init__.py at archive root" >&2
       exit 1
       ;;
   esac
   case "$zip_list" in
-    *helio_zero/brand/icon.png*) ;;
+    *brand/icon.png*) ;;
     *)
-      echo "ERROR: zip missing helio_zero/brand/icon.png" >&2
+      echo "ERROR: zip missing brand/icon.png" >&2
+      exit 1
+      ;;
+  esac
+  case "$zip_list" in
+    *helio_zero/manifest.json*)
+      echo "ERROR: zip must not nest helio_zero/ (causes helio_zero/helio_zero/ on install)" >&2
       exit 1
       ;;
   esac

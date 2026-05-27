@@ -51,9 +51,9 @@ Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_c
 ### HelioZero missing from “Add integration”?
 
 1. **Settings → System → Logs** — search for `helio_zero`. An `ImportError` or version message means the custom component did not load (fix the error, or upgrade Home Assistant to **2026.3+**).
-2. Confirm the folder exists: `config/custom_components/helio_zero/manifest.json`.
+2. Confirm the folder exists: `config/custom_components/helio_zero/manifest.json` (not `custom_components/helio_zero/helio_zero/` — if nested, remove the folder, **Redownload** release **v0.1.0**, restart).
 3. In HACS, open **HelioZero →** use **Redownload** and pick the latest **Release** (not a hidden/empty default branch). Restart Home Assistant.
-4. If you previously installed from `main` before `v0.1.0`, remove `config/custom_components/helio_zero`, redownload the release zip, restart, then add the integration again.
+4. If you previously installed a broken release zip, remove `config/custom_components/helio_zero`, redownload release **v0.1.0**, restart, then add the integration again.
 
 **Initial release 0.1.0:** per-router `unique_id` (`{config_entry_id}_{key}`), HA brand icons, `issue_tracker` in manifest, and device **Open router UI** link (`configuration_url`).
 

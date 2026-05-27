@@ -15,4 +15,4 @@ First public release (custom repository + GitHub Release zip).
 - Multiple routers: add the integration again per base URL.
 - Entity registry: sensors, binary sensors, switches, numbers, selects, button.
 - Coordinator: `asyncio.gather`, `entry.runtime_data`, `/sources/diagnostics` poll.
-- CI / release: `hacs/action@main`, `hassfest@master`, gated `release.yaml`, `helio-zero-hacs.zip`.
+- CI / release: `hacs/action@main`, `hassfest@master`, gated `release.yaml`, `helio-zero-hacs.zip` (flat zip root for HACS `zip_release` — files extract into `custom_components/helio_zero/`, not `helio_zero/helio_zero/`).

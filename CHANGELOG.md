@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- REST refresh interval configurable from **1 second to 5 minutes** (was 15 s – 2 min).
+
 ## 0.1.0
 
 First public release (custom repository + GitHub Release zip).

@@ -171,6 +171,35 @@ async def test_poll_bundle_v2(rest_session: aiohttp.ClientSession, base_url: str
 
 @pytest.mark.hardware
 @pytest.mark.asyncio
+async def test_second_channel_read_snapshot_key(
+    rest_session: aiohttp.ClientSession, base_url: str
+) -> None:
+    """read_snapshot_key resolves CH2 from nested measurements on the lab bench."""
+    from tests.unit.helio_import import load_entity_registry
+
+    read_snapshot_key = load_entity_registry().read_snapshot_key
+
+    async def _get(path: str) -> dict[str, Any]:
+        async with rest_session.get(f"{base_url}{path}") as resp:
+            resp.raise_for_status()
+            payload = await resp.json()
+            return payload if isinstance(payload, dict) else {}
+
+    measurements = await _get("/api/v1/measurements")
+    snapshot = await _get("/api/v1/telemetry/snapshot")
+    second = measurements.get("second") or {}
+    if second.get("active_import_w") is None and (
+        (measurements.get("raw_meter") or {}).get("voltage_second_v") is None
+    ):
+        pytest.skip("bench has no live second-channel metering")
+
+    data = {"measurements": measurements, "snapshot": snapshot}
+    assert read_snapshot_key(data, "second_active_import_w") is not None
+    assert read_snapshot_key(data, "second_voltage_v") is not None
+
+
+@pytest.mark.hardware
+@pytest.mark.asyncio
 async def test_triac_override_auto(
     rest_session: aiohttp.ClientSession, base_url: str
 ) -> None:

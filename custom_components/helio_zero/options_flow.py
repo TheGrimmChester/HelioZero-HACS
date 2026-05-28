@@ -7,11 +7,17 @@ from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
+    CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
     CONF_INTEGRATION_MODE,
     CONF_SCAN_INTERVAL,
+    CONF_SKIP_UNAVAILABLE_ON_FAILURE,
+    DEFAULT_FAILURE_COUNT_UNTIL_UNAVAILABLE,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SKIP_UNAVAILABLE_ON_FAILURE,
     DOMAIN,
+    MAX_FAILURE_COUNT_UNTIL_UNAVAILABLE,
     MAX_SCAN_INTERVAL,
+    MIN_FAILURE_COUNT_UNTIL_UNAVAILABLE,
     MIN_SCAN_INTERVAL,
     MODE_COMPANION,
     MODE_REST_ONLY,
@@ -36,6 +42,26 @@ class HelioZeroOptionsFlow(config_entries.OptionsFlow):
                         CONF_SCAN_INTERVAL,
                         default=entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
                     ): vol.All(vol.Coerce(int), vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)),
+                    vol.Optional(
+                        CONF_SKIP_UNAVAILABLE_ON_FAILURE,
+                        default=entry.options.get(
+                            CONF_SKIP_UNAVAILABLE_ON_FAILURE,
+                            DEFAULT_SKIP_UNAVAILABLE_ON_FAILURE,
+                        ),
+                    ): bool,
+                    vol.Optional(
+                        CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+                        default=entry.options.get(
+                            CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+                            DEFAULT_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+                        ),
+                    ): vol.All(
+                        vol.Coerce(int),
+                        vol.Range(
+                            min=MIN_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+                            max=MAX_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+                        ),
+                    ),
                 }
             ),
         )

@@ -5,7 +5,11 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN
+from .const import (
+    CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+    CONF_SKIP_UNAVAILABLE_ON_FAILURE,
+    DOMAIN,
+)
 from .integration_mode import effective_mode
 
 
@@ -15,6 +19,10 @@ def _redact(entry: ConfigEntry) -> dict:
         "has_token": bool(entry.data.get("api_token")),
         "integration_mode": entry.options.get("integration_mode"),
         "scan_interval": entry.options.get("scan_interval"),
+        "skip_unavailable_on_failure": entry.options.get(CONF_SKIP_UNAVAILABLE_ON_FAILURE),
+        "failure_count_until_unavailable": entry.options.get(
+            CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE
+        ),
     }
 
 

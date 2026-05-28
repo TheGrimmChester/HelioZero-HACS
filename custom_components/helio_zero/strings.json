@@ -30,10 +30,12 @@
     "step": {
       "init": {
         "title": "HelioZero options",
-        "description": "Lower refresh interval = more responsive sensors; higher = less load on the router LAN.",
+        "description": "Lower refresh interval = more responsive sensors; higher = less load on the router LAN. Availability behavior on failed polls is configurable below.",
         "data": {
           "integration_mode": "Integration mode",
-          "scan_interval": "REST refresh interval (seconds)"
+          "scan_interval": "REST refresh interval (seconds)",
+          "skip_unavailable_on_failure": "Skip unavailable state on failed refresh",
+          "failure_count_until_unavailable": "Failed refreshes before unavailable (skip mode, 0 = never)"
         }
       }
     }

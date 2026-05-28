@@ -30,10 +30,12 @@
     "step": {
       "init": {
         "title": "Options HelioZero",
-        "description": "Intervalle court = capteurs plus réactifs ; intervalle long = moins de charge sur le LAN du routeur.",
+        "description": "Intervalle court = capteurs plus réactifs ; intervalle long = moins de charge sur le LAN du routeur. Le comportement de disponibilité en cas d'échec d'actualisation est configurable ci-dessous.",
         "data": {
           "integration_mode": "Mode d'intégration",
-          "scan_interval": "Intervalle d'actualisation REST (secondes)"
+          "scan_interval": "Intervalle d'actualisation REST (secondes)",
+          "skip_unavailable_on_failure": "Ignorer l'état indisponible en cas d'échec d'actualisation",
+          "failure_count_until_unavailable": "Échecs d'actualisation avant indisponible (mode ignorer, 0 = jamais)"
         }
       }
     }

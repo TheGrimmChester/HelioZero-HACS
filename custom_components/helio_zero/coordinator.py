@@ -14,7 +14,17 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .connection import scan_interval_seconds
-from .const import CONF_API_TOKEN, CONF_HOST, DOMAIN
+from .const import (
+    CONF_API_TOKEN,
+    CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+    CONF_HOST,
+    CONF_SKIP_UNAVAILABLE_ON_FAILURE,
+    DEFAULT_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+    DEFAULT_SKIP_UNAVAILABLE_ON_FAILURE,
+    DOMAIN,
+    MAX_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+    MIN_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+)
 from .integration_mode import configured_mode
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,12 +58,34 @@ class HelioZeroCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._entry = entry
         self._session = async_get_clientsession(hass)
         self._configured_mode = configured_mode(entry)
+        self._consecutive_failures = 0
         self._apply_entry_data(entry)
+        self._apply_failure_policy(entry)
 
     def _apply_entry_data(self, entry: ConfigEntry) -> None:
         self._host = entry.data[CONF_HOST].rstrip("/")
         token = entry.data.get(CONF_API_TOKEN) or ""
         self._token = token if token else None
+
+    def _apply_failure_policy(self, entry: ConfigEntry) -> None:
+        raw_skip = entry.options.get(
+            CONF_SKIP_UNAVAILABLE_ON_FAILURE,
+            DEFAULT_SKIP_UNAVAILABLE_ON_FAILURE,
+        )
+        self._skip_unavailable_on_failure = bool(raw_skip)
+
+        raw_threshold = entry.options.get(
+            CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+            DEFAULT_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+        )
+        try:
+            threshold = int(raw_threshold)
+        except (TypeError, ValueError):
+            threshold = DEFAULT_FAILURE_COUNT_UNTIL_UNAVAILABLE
+        self._failure_count_until_unavailable = max(
+            MIN_FAILURE_COUNT_UNTIL_UNAVAILABLE,
+            min(MAX_FAILURE_COUNT_UNTIL_UNAVAILABLE, threshold),
+        )
 
     def update_from_entry(self, entry: ConfigEntry) -> bool:
         """Apply connection and poll-interval changes. Return True if platforms need reload."""
@@ -61,6 +93,7 @@ class HelioZeroCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         needs_reload = new_mode != self._configured_mode
         self._entry = entry
         self._apply_entry_data(entry)
+        self._apply_failure_policy(entry)
         self.update_interval = timedelta(seconds=scan_interval_seconds(entry.options))
         self._configured_mode = new_mode
         return needs_reload
@@ -151,7 +184,25 @@ class HelioZeroCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 self._async_get_json("/api/v1/actions/config", required=False),
             )
         except Exception as err:
+            self._consecutive_failures += 1
+            if not self._skip_unavailable_on_failure:
+                raise UpdateFailed(str(err)) from err
+
+            threshold = self._failure_count_until_unavailable
+            if threshold > 0 and self._consecutive_failures >= threshold:
+                raise UpdateFailed(str(err)) from err
+
+            # In skip mode we keep entities available by serving last good payload.
+            if self.data:
+                _LOGGER.debug(
+                    "Skipping unavailable after polling failure (%s/%s): %s",
+                    self._consecutive_failures,
+                    threshold if threshold > 0 else "never",
+                    err,
+                )
+                return self.data
             raise UpdateFailed(str(err)) from err
+        self._consecutive_failures = 0
         config = cfg_body.get("config", cfg_body) if isinstance(cfg_body, dict) else {}
         actions_config = actions_cfg if isinstance(actions_cfg, dict) else {}
         return {

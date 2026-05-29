@@ -5,6 +5,7 @@ from __future__ import annotations
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import selector
 
 from .const import (
     CONF_FAILURE_COUNT_UNTIL_UNAVAILABLE,
@@ -14,7 +15,6 @@ from .const import (
     DEFAULT_FAILURE_COUNT_UNTIL_UNAVAILABLE,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_SKIP_UNAVAILABLE_ON_FAILURE,
-    DOMAIN,
     MAX_FAILURE_COUNT_UNTIL_UNAVAILABLE,
     MAX_SCAN_INTERVAL,
     MIN_FAILURE_COUNT_UNTIL_UNAVAILABLE,
@@ -36,8 +36,14 @@ class HelioZeroOptionsFlow(config_entries.OptionsFlow):
                 {
                     vol.Optional(
                         CONF_INTEGRATION_MODE,
-                        default=entry.options.get(CONF_INTEGRATION_MODE, MODE_COMPANION),
-                    ): vol.In([MODE_REST_ONLY, MODE_COMPANION]),
+                        default=entry.options.get(CONF_INTEGRATION_MODE, MODE_REST_ONLY),
+                    ): selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=[MODE_REST_ONLY, MODE_COMPANION],
+                            translation_key="integration_mode",
+                            mode=selector.SelectSelectorMode.LIST,
+                        )
+                    ),
                     vol.Optional(
                         CONF_SCAN_INTERVAL,
                         default=entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),

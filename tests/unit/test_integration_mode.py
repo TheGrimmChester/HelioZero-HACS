@@ -29,3 +29,13 @@ def test_companion_entity_list():
     data = {"measurements": {}, "snapshot": {}}
     keys = {s.key for s in entities_for_mode(data, MODE_COMPANION)}
     assert keys == {"republish_discovery"}
+
+
+def test_configured_mode_defaults_to_rest_only():
+    from unittest.mock import MagicMock
+
+    configured_mode = integration_mode.configured_mode
+    entry = MagicMock()
+    entry.options = {}
+    entry.data = {}
+    assert configured_mode(entry) == MODE_REST_ONLY

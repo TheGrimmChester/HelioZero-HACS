@@ -3,6 +3,8 @@
 ## 0.1.2
 
 - REST refresh interval configurable from **1 second to 5 minutes** (was 15 s – 2 min).
+- **Default integration mode is now `rest_only`** (full REST entity set). Hybrid MQTT setups: open **Configure** and pick **companion** to avoid duplicate entities.
+- Options flow: descriptive EN/FR labels for **Integration mode** (`SelectSelector` list); step text explains companion vs REST only.
 
 ## 0.1.0
 

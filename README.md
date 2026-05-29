@@ -63,8 +63,8 @@ Integration icons/logos ship in [`custom_components/helio_zero/brand/`](custom_c
 
 | Mode | Entities |
 |------|----------|
-| **`companion`** (default when MQTT discovery exists) | `button.republish_discovery` only |
-| **`rest_only`** | Full MQTT discovery parity via REST (sensors, binary sensors, vacation, triac, actions, …) |
+| **`rest_only`** (default) | Full MQTT discovery parity via REST (sensors, binary sensors, vacation, triac, actions, …) |
+| **`companion`** | `button.republish_discovery` only when MQTT discovery is active on this router |
 
 Configure mode and REST refresh interval (1 s – 5 min) under **Settings → Devices & services → HelioZero → Configure** (changes apply without restart).
 
@@ -78,7 +78,7 @@ Diagnostics: **Settings → Devices → Diagnostics** (redacted token, effective
 | Broker automations & device triggers | UI setup without editing discovery YAML |
 | Lowest latency MQTT commands | Full entity surface when no MQTT entities |
 
-**Hybrid:** leave default **companion** mode (or set explicitly) so HACS does not duplicate MQTT entities; use the [MQTT Lovelace dashboard](https://heliozero.clouded.fr/assets/integrations/home-assistant/lovelace/dashboard.yaml) for monitoring.
+**Hybrid:** default is **rest_only** (full HACS entities). If MQTT discovery is already active on the router, open **Configure** and switch to **companion** so HACS does not duplicate MQTT entities; use the [MQTT Lovelace dashboard](https://heliozero.clouded.fr/assets/integrations/home-assistant/lovelace/dashboard.yaml) for monitoring.
 
 ## Development
 

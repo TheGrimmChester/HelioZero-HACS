@@ -13,7 +13,7 @@ def configured_mode(entry: ConfigEntry) -> str:
     mode = entry.options.get("integration_mode") or entry.data.get("integration_mode")
     if mode in (MODE_COMPANION, MODE_REST_ONLY):
         return mode
-    return MODE_COMPANION
+    return MODE_REST_ONLY
 
 
 def _device_matches_router_uid(device: er.DeviceEntry, device_uid: str) -> bool:

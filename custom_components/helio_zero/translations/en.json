@@ -1,4 +1,31 @@
 {
+  "config": {
+    "step": {
+      "user": {
+        "title": "HelioZero",
+        "description": "Connect to one router REST API (MQTT remains the default). Add the integration again for each additional router. After setup, use **Configure** for integration mode and refresh interval; use **Reconfigure** (⋮ menu) to change the router URL or API token.",
+        "data": {
+          "host": "Router base URL",
+          "api_token": "API token (optional)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure HelioZero",
+        "description": "Change the router base URL or API token. Leave API token empty to keep the current token.",
+        "data": {
+          "host": "Router base URL",
+          "api_token": "API token (optional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach /api/v1/public on the router (check URL and network)",
+      "invalid_auth": "API token rejected (HTTP 401 on /api/v1/public)"
+    },
+    "abort": {
+      "already_configured": "This router URL is already configured"
+    }
+  },
   "options": {
     "step": {
       "init": {
